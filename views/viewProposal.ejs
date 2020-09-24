@@ -1,0 +1,93 @@
+<%- include('partials/header') %>
+
+<div ng-app="myApp" ng-controller="customersCtrl" class="proposal-main-container">
+    <a id="id" href="<%=job._id%>" style="display: none;"></a>
+    <p id="backtoprofile">
+        <a href="/viewprofile/<%=currentUser._id%>" class="job-proposal-backlink"
+          ><i class="fa fa-angle-left" aria-hidden="true"></i> Back to profile</a
+        >
+        <div class="viewProposal-container">
+        
+        <div class="my-feed2"><h3><i class="fa fa-envelope" aria-hidden="true"></i>
+            Proposal for : <%=job.jobdetail.jobTitle%></h3> <span style="font-size: small;font-weight: 300; position: relative; right: 0;"> Posted on <%=job._id.getTimestamp().toString().slice(0,15)%></span></div>
+        <table id="view-proposal-table">
+        <thead>
+        <tr>
+            <th>No</th>
+            <th>Name</th>
+            <th>bid Amount</th>
+            <th>Time bid</th>
+            <th>CoverLetter</th>
+            <th>Resume</th>
+            <th>Attachements</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <%job.proposals.id.forEach(function(proposal,i){%>
+            <tr>
+                <td><%=i+1%></td>
+                <td><%=proposal.author.id.firstName +" "+ proposal.author.id.lastName%></td>
+                <td><%=proposal.bidAmount%></td>
+                <td><%=proposal.timeLength%></td>
+                <td><button value="<%=i%>" type="submit" class="accept-btn view-cover-letter" style="width: fit-content;">view Cover Letter</button></td>
+                <td><a href="http://localhost:8080/<%=proposal.resume%>" target="_blank">View Cv</a></td>
+                <td ><a href="http://localhost:8080/<%=proposal.additionalAttachment%>" target="_blank">View Attachment</a></td>
+                <%if(proposal.status=="Pending"){%>
+                <td><form style="display: inline;" action="/proposal/accept/<%=proposal._id%>" method="POST"><button type="submit" class="accept-btn">Accept</button></form> |
+                <form style="display: inline;" action="/proposal/reject/<%=proposal._id%>" method="POST"><button type="submit" class="accept-btn" style="background-color:#F32013">Reject</button></form></td>
+                <%}else{%>
+                <td><%=proposal.status%></td>
+                <%}%>
+            </tr>
+        <%})%>
+        </tbody>
+        </table>
+
+       </div>
+       <%job.proposals.id.forEach(function(proposal,i){%>
+       <div class="coverletter viewcoverletter-container">
+        <div class="my-feed2"><h3><i class="fa fa-envelope" aria-hidden="true"></i>
+            <%=proposal.author.id.firstName +" "+ proposal.author.id.lastName%>'s Cover Letter </h3></div>
+            <hr>
+        
+            <div class="letter-text">
+                <%-proposal.coverLetter%>
+            </div>
+        </div>
+       <%})%>
+</div>
+
+<script>
+
+
+        $(".nav").css("background-color","#f5f5FF");
+      
+        $(document).ready(() => {
+            
+            $('.viewcoverletter-container').each(function(){
+                $(this).css("display","none")
+            })
+
+
+
+        });
+
+        $('.view-cover-letter').each(function(){
+         
+            $(this).on('click', (e) => {
+                    var val=e.target.value;
+                    $('.viewcoverletter-container').each(function(){
+                      $(this).css("display","none");
+                     })
+                    $(".viewcoverletter-container")[val].style.display="block";
+            })
+           
+           
+
+        })
+        
+</script>
+
+    
+<%- include('partials/footer') %>
